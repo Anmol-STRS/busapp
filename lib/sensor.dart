@@ -8,10 +8,13 @@ Future<SensorData?> getSensorData() async {
     final event = await ref.once();
     final snapshot = event.snapshot; // Access the DataSnapshot from the event
     if (snapshot.exists) {
-      final data = snapshot.value as Map<String, dynamic>;
+      final data = snapshot.value as Map<dynamic, dynamic>;
       final pressure = data["pressure"] as double?;
       final count = data["count"] as int?;
-      return SensorData(pressure: pressure, count: count);
+      final humidity = data["humidity"] as double?;
+      final temperature = data["temperature"] as double?;
+      
+      return SensorData(pressure: pressure, count: count, humidity: humidity, temperature: temperature);
     } else {
       print("No sensor data found!");
       return null;
@@ -25,10 +28,11 @@ Future<SensorData?> getSensorData() async {
 class SensorData {
   final double? pressure;
   final int? count;
+  final double? humidity;
+  final double? temperature;
 
-  SensorData({this.pressure, this.count});
+  SensorData({this.pressure, this.count, this.humidity, this.temperature});
 }
-
 
 class SensorDataView extends StatefulWidget {
   @override
@@ -63,16 +67,26 @@ class _SensorDataState extends State<SensorDataView> {
                 children: [
                   Text(
                     'Pressure: ${_sensorData?.pressure?.toStringAsFixed(2) ?? 'N/A'}',
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     'Count: ${_sensorData?.count ?? 'N/A'}',
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Temperature: ${_sensorData?.temperature ?? 'N/A'}',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                 const SizedBox(height: 10),
+                  Text(
+                    'Humidity : ${_sensorData?.humidity ?? 'N/A'}',
+                    style:const TextStyle(fontSize: 18),
                   ),
                 ],
               )
-            : CircularProgressIndicator(),
+            : const CircularProgressIndicator(),
       ),
     );
   }
